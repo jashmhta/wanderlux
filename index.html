@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wanderlux — Curated Journeys for the Discerning Traveler</title>
 <meta name="description" content="Bespoke travel experiences crafted for those who seek the extraordinary.">
-<link rel="preload" as="image" href="https://images.pexels.com/photos/4784345/pexels-photo-4784345.jpeg?auto=compress&cs=tinysrgb&w=1920" fetchpriority="high">
+<link rel="preload" as="image" href="https://images.pexels.com/photos/36720508/pexels-photo-36720508.jpeg?auto=compress&cs=tinysrgb&w=1920" fetchpriority="high">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -356,7 +356,7 @@
 
   .btn-outline {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(20,54,66,0.15); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    background: rgba(15,10,5,0.15); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
     color: var(--white);
     font-size: 0.7rem; font-weight: 600;
     letter-spacing: 0.1em; text-transform: uppercase;
@@ -380,15 +380,15 @@
   .hero-media::after {
     content: ''; position: absolute; inset: 0;
     background:
-      linear-gradient(180deg, rgba(20,54,66,0.15) 0%, transparent 30%, transparent 50%, rgba(20,54,66,0.55) 85%, rgba(20,54,66,0.8) 100%),
-      linear-gradient(90deg, rgba(20,54,66,0.2) 0%, transparent 40%);
+      linear-gradient(180deg, rgba(15,10,5,0.15) 0%, transparent 30%, transparent 50%, rgba(15,10,5,0.55) 85%, rgba(15,10,5,0.8) 100%),
+      linear-gradient(90deg, rgba(15,10,5,0.2) 0%, transparent 40%);
     z-index: 1; pointer-events: none;
   }
   /* Mobile: slightly stronger overlay for readability */
   @media (max-width: 767px) {
     .hero-media::after {
       background:
-        linear-gradient(180deg, rgba(20,54,66,0.1) 0%, transparent 25%, transparent 45%, rgba(20,54,66,0.5) 75%, rgba(20,54,66,0.8) 100%);
+        linear-gradient(180deg, rgba(15,10,5,0.1) 0%, transparent 25%, transparent 45%, rgba(15,10,5,0.5) 75%, rgba(15,10,5,0.8) 100%);
     }
   }
 
@@ -1236,9 +1236,9 @@
     </div>
   </div>
   <div class="hero-media">
-    <video autoplay muted loop playsinline id="heroVideo" poster="https://images.pexels.com/photos/4784345/pexels-photo-4784345.jpeg?auto=compress&cs=tinysrgb&w=1920">
+    <video autoplay muted loop playsinline id="heroVideo" poster="https://images.pexels.com/photos/36720508/pexels-photo-36720508.jpeg?auto=compress&cs=tinysrgb&w=1920">
     </video>
-    <img src="https://images.pexels.com/photos/4784345/pexels-photo-4784345.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Aerial view of turquoise tropical ocean" id="heroFallbackImg" style="z-index:-1;">
+    <img src="https://images.pexels.com/photos/36720508/pexels-photo-36720508.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Golden hour sunset over the ocean" id="heroFallbackImg" style="z-index:-1;">
     <div class="hero-scroll-hint">
       <span>Scroll</span>
       <div class="hero-scroll-line"></div>
@@ -1561,9 +1561,9 @@
 
   // Video IDs only — URLs fetched dynamically from Pexels API to avoid expired links
   var VIDEO_DEFS = [
-    { title: 'Ocean Depths', sub: 'Aerial · Pacific Coast', videoId: 31879939, posterPhotoId: 4784345, badge: 'Loop' },
+    { title: 'Golden Hour', sub: 'Sunset · Ocean Horizon', videoId: 8232558, posterPhotoId: 36720508, badge: 'Loop' },
     { title: 'Alpine Majesty', sub: 'Drone · Swiss Alps', videoId: 31115054, posterPhotoId: 20256853, badge: 'Loop' },
-    { title: 'Golden Hour', sub: 'Aerial · Tropics', videoId: 6073392, posterPhotoId: 3155643, badge: 'Loop' },
+    { title: 'Tropical Glow', sub: 'Aerial · Tropics', videoId: 6073392, posterPhotoId: 3155643, badge: 'Loop' },
     { title: 'Aurora Borealis', sub: 'Timelapse · Iceland', videoId: 14947495, posterPhotoId: 35872623, badge: 'Loop' },
     { title: 'Skyward', sub: 'Aerial · Cappadocia', videoId: 18471085, posterPhotoId: 29205428, badge: 'Loop' },
     { title: 'Coral Kingdom', sub: 'Underwater · Great Barrier Reef', videoId: 34293684, badge: 'Loop' },
@@ -1756,7 +1756,7 @@
     if (!video) return;
 
     // Fetch hero video URL dynamically from Pexels API
-    fetchPexelsVideo(31879939).then(function(data) {
+    fetchPexelsVideo(8232558).then(function(data) {
       if (data.src) {
         var source = document.createElement('source');
         source.src = data.src;
