@@ -198,6 +198,13 @@
       box-shadow: 0 4px 20px rgba(26,14,8,0.08), 0 0 0 1px rgba(26,14,8,0.06);
       padding: 0;
     }
+    /* When mobile menu is open, force dark glass style even if scrolled */
+    .nav.menu-open {
+      background: rgba(20,54,66,0.75) !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1) !important;
+    }
+    .nav.menu-open .nav-logo { color: var(--white) !important; }
+    .nav.menu-open .nav-burger span { background: var(--white) !important; }
     .nav-logo {
       padding: 0.6rem 1rem 0.6rem 1.3rem;
       font-size: 1.1rem;
@@ -2171,6 +2178,7 @@
     burger.addEventListener('click', function() {
       var isOpen = menu.classList.toggle('open');
       burger.classList.toggle('active', isOpen);
+      nav.classList.toggle('menu-open', isOpen);
       burger.setAttribute('aria-expanded', isOpen);
       document.body.style.overflow = isOpen ? 'hidden' : '';
     });
@@ -2179,6 +2187,7 @@
       a.addEventListener('click', function() {
         menu.classList.remove('open');
         burger.classList.remove('active');
+        nav.classList.remove('menu-open');
         burger.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
       });
