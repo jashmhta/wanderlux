@@ -50,7 +50,7 @@
     --radius-lg: 20px;
   }
 
-  html { font-size: 16px; scroll-behavior: auto; }
+  html { font-size: 16px; scroll-behavior: auto; overflow-x: hidden; }
 
   body {
     background: var(--bg-linen);
@@ -59,6 +59,7 @@
     font-weight: 400;
     line-height: 1.65;
     overflow-x: hidden;
+    max-width: 100vw;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -198,21 +199,21 @@
       box-shadow: none;
       padding: 0 0.75rem;
     }
-    /* Individual glass pills */
+    /* Individual glass pills — white frosted glass */
     .nav-pill {
       pointer-events: auto;
-      background: rgba(20,54,66,0.72);
-      backdrop-filter: blur(20px) saturate(1.6);
-      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
       border-radius: 999px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.3);
       display: flex;
       align-items: center;
       transition: background 0.4s, box-shadow 0.4s;
     }
     .nav.scrolled .nav-pill {
-      background: rgba(250,247,242,0.88);
-      box-shadow: 0 4px 20px rgba(26,14,8,0.08), 0 0 0 1px rgba(26,14,8,0.06);
+      background: rgba(250,247,242,0.85);
+      box-shadow: 0 4px 20px rgba(26,14,8,0.06), 0 0 0 1px rgba(26,14,8,0.04);
     }
     /* When mobile menu is open, force dark glass style even if scrolled */
     .nav.menu-open .nav-pill {
@@ -230,13 +231,13 @@
     .nav-logo {
       padding: 0;
       font-size: 1.05rem;
-      color: var(--white);
+      color: var(--text-dark);
     }
     .nav.scrolled .nav-logo { color: var(--text-dark); }
     .nav-burger {
       padding: 0;
     }
-    .nav-burger span { background: var(--white); }
+    .nav-burger span { background: var(--text-dark); }
     .nav.scrolled .nav-burger span { background: var(--text-dark); }
   }
   /* Desktop: pills are invisible wrappers */
