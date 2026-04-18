@@ -276,7 +276,7 @@
   .nav-burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
   .mobile-menu {
-    position: fixed; inset: 0; z-index: 105;
+    position: fixed; inset: 0; z-index: 50;
     background: var(--ocean);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 2rem;
@@ -1936,10 +1936,10 @@
 
     // Nav scroll behavior — hide while scrolling, show when stopped (mobile pill)
     var nav = document.getElementById('nav');
-    var isMobile = window.innerWidth < 768;
     var lastScrollY = window.scrollY;
     var scrollHideTimer = null;
     var isNavHidden = false;
+    function isMobile() { return window.innerWidth < 768; }
 
     function showNav() {
       if (isNavHidden) {
@@ -1948,7 +1948,7 @@
       }
     }
     function hideNav() {
-      if (!isNavHidden && isMobile) {
+      if (!isNavHidden && isMobile()) {
         nav.classList.add('nav-hidden');
         isNavHidden = true;
       }
@@ -1961,7 +1961,7 @@
         nav.classList.toggle('scrolled', currentScrollY > 80);
 
         // Mobile: hide while scrolling, show when stopped
-        if (isMobile) {
+        if (isMobile()) {
           var scrollDelta = Math.abs(currentScrollY - lastScrollY);
           if (scrollDelta > 5) {
             hideNav();
@@ -1976,15 +1976,14 @@
     });
 
     // Also show nav on touch start (mobile)
-    if (isMobile) {
-      document.addEventListener('touchstart', function() {
-        showNav();
-        clearTimeout(scrollHideTimer);
-        scrollHideTimer = setTimeout(function() {
-          if (window.scrollY > 100) hideNav();
-        }, 1500);
-      }, { passive: true });
-    }
+    document.addEventListener('touchstart', function() {
+      if (!isMobile()) return;
+      showNav();
+      clearTimeout(scrollHideTimer);
+      scrollHideTimer = setTimeout(function() {
+        if (window.scrollY > 100) hideNav();
+      }, 1500);
+    }, { passive: true });
 
     // Hero entrance
     var heroTl = gsap.timeline({ delay: 0.3 });
