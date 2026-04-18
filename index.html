@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlux — Curated Journeys for the Discerning Traveler</title>
+<meta name="description" content="Bespoke travel experiences crafted for those who seek the extraordinary.">
+<link rel="preload" as="image" href="https://images.pexels.com/photos/4784345/pexels-photo-4784345.jpeg?auto=compress&cs=tinysrgb&w=1920" fetchpriority="high">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js" defer></script>
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-linen: #FAF7F2;
+    --bg-cream: #F5F0E8;
+    --bg-sand: #EDE5D8;
+    --terracotta: #C04A2C;
+    --terracotta-light: #F3D9D2;
+    --terracotta-deep: #8B2F1A;
+    --ocean: #143642;
+    --ocean-light: #1D5A6B;
+    --ocean-pale: #D6ECEF;
+    --amber: #E8A317;
+    --amber-light: #FDF0D5;
+    --amber-deep: #B07D0A;
+    --text-dark: #1A0E08;
+    --text-body: #3D2B1F;
+    --text-mid: #6B5748;
+    --text-light: #9A8A7A;
+    --white: #FFFFFF;
+    --border: rgba(26,14,8,0.1);
+    --border-strong: rgba(26,14,8,0.2);
+    --shadow-sm: 0 2px 8px rgba(26,14,8,0.06);
+    --shadow-md: 0 8px 24px rgba(26,14,8,0.08);
+    --shadow-lg: 0 20px 60px rgba(26,14,8,0.12);
+    --font-display: 'Gloock', serif;
+    --font-body: 'Epilogue', sans-serif;
+    --font-mono: 'Courier New', monospace;
+    --ease-out: cubic-bezier(0.16,1,0.3,1);
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+  }
+
+  html { font-size: 16px; scroll-behavior: auto; }
+
+  body {
+    background: var(--bg-linen);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.65;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--terracotta); color: var(--white); }
+
+  :focus-visible {
+    outline: 2px solid var(--ocean-light);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ─── SKIP LINK ─── */
+  .skip-link {
+    position: absolute; top: -100%; left: 0; z-index: 10000;
+    background: var(--terracotta); color: var(--white);
+    padding: 0.75rem 1.5rem; font-size: 0.875rem;
+    border-radius: 0 0 8px 0; transition: top 0.2s;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* ─── FILM GRAIN OVERLAY ─── */
+  .grain {
+    position: fixed; inset: 0; z-index: 9998;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 150px 150px;
+  }
+
+  /* ─── LOADER ─── */
+  .loader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--ocean);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.5rem;
+  }
+  .loader-brand {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    color: var(--white); letter-spacing: 0.02em;
+    overflow: hidden;
+  }
+  .loader-brand span {
+    display: inline-block; opacity: 0;
+    transform: translateY(40px);
+  }
+  .loader-brand .accent { color: var(--amber); }
+  .loader-bar-track {
+    width: 120px; height: 2px;
+    background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden;
+  }
+  .loader-bar-fill {
+    width: 0%; height: 100%;
+    background: var(--amber); border-radius: 2px;
+  }
+
+  /* ─── PATTERN BACKGROUNDS ─── */
+  .pattern-topo {
+    background-image:
+      radial-gradient(ellipse 280px 200px at 15% 25%, transparent 47%, rgba(26,14,8,0.03) 47.5%, transparent 48%),
+      radial-gradient(ellipse 220px 160px at 15% 25%, transparent 47%, rgba(26,14,8,0.03) 47.5%, transparent 48%),
+      radial-gradient(ellipse 160px 120px at 15% 25%, transparent 47%, rgba(26,14,8,0.03) 47.5%, transparent 48%),
+      radial-gradient(ellipse 100px 70px at 15% 25%, transparent 47%, rgba(26,14,8,0.04) 47.5%, transparent 48%),
+      radial-gradient(ellipse 340px 240px at 75% 65%, transparent 47%, rgba(26,14,8,0.03) 47.5%, transparent 48%),
+      radial-gradient(ellipse 260px 180px at 75% 65%, transparent 47%, rgba(26,14,8,0.03) 47.5%, transparent 48%),
+      radial-gradient(ellipse 180px 130px at 75% 65%, transparent 47%, rgba(26,14,8,0.03) 47.5%, transparent 48%),
+      radial-gradient(ellipse 110px 80px at 75% 65%, transparent 47%, rgba(26,14,8,0.04) 47.5%, transparent 48%);
+  }
+  .pattern-dots {
+    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* ─── DECORATIVE ORNAMENTS ─── */
+  .ornament {
+    display: flex; align-items: center; gap: 1rem;
+    justify-content: center; margin: 2.5rem 0 0;
+  }
+  .ornament-line { width: 60px; height: 1px; background: var(--terracotta); }
+  .ornament-diamond {
+    width: 8px; height: 8px;
+    background: var(--terracotta); transform: rotate(45deg); flex-shrink: 0;
+  }
+
+  /* ─── WAVE DIVIDERS ─── */
+  .wave-divider { line-height: 0; margin-top: -1px; }
+  .wave-divider svg { display: block; width: 100%; height: auto; }
+
+  /* ─── NAV ─── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s, box-shadow 0.4s, padding 0.4s;
+  }
+  @media (min-width: 768px) { .nav { padding: 1.25rem 3rem; } }
+
+  .nav.scrolled {
+    background: rgba(250,247,242,0.94);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    padding: 0.6rem 1.25rem;
+    box-shadow: var(--shadow-sm);
+  }
+  @media (min-width: 768px) { .nav.scrolled { padding: 0.75rem 3rem; } }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.4rem; color: var(--white);
+    letter-spacing: 0.02em;
+    transition: color 0.4s;
+  }
+  .nav.scrolled .nav-logo { color: var(--text-dark); }
+  .nav-logo .accent { color: var(--amber); }
+
+  .nav-links {
+    display: none; align-items: center; gap: 2rem; list-style: none;
+  }
+  @media (min-width: 768px) { .nav-links { display: flex; } }
+
+  .nav-links a {
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7); position: relative;
+    transition: color 0.3s;
+  }
+  .nav.scrolled .nav-links a { color: var(--text-mid); }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: var(--terracotta);
+    transition: width 0.4s var(--ease-out);
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav.scrolled .nav-links a:hover { color: var(--text-dark); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    display: none; align-items: center; gap: 0.5rem;
+    background: var(--terracotta); color: var(--white);
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.6rem 1.4rem; border-radius: var(--radius-sm);
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+  @media (min-width: 768px) { .nav-cta { display: inline-flex; } }
+  .nav-cta:hover {
+    background: var(--terracotta-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(192,74,44,0.3);
+  }
+  .nav-cta svg { width: 12px; height: 12px; }
+
+  /* ─── MOBILE MENU ─── */
+  .nav-burger {
+    display: flex; flex-direction: column; gap: 5px;
+    padding: 6px; z-index: 110; background: none; border: none;
+  }
+  @media (min-width: 768px) { .nav-burger { display: none; } }
+  .nav-burger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--white); border-radius: 1px;
+    transition: transform 0.3s, opacity 0.3s, background 0.3s;
+  }
+  .nav.scrolled .nav-burger span { background: var(--text-dark); }
+  .nav-burger.active span { background: var(--white) !important; }
+  .nav-burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger.active span:nth-child(2) { opacity: 0; }
+  .nav-burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    position: fixed; inset: 0; z-index: 105;
+    background: var(--ocean);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2rem;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s, visibility 0.4s;
+  }
+  .mobile-menu.open { opacity: 1; visibility: visible; }
+  .mobile-menu a {
+    font-family: var(--font-display);
+    font-size: 2rem; color: var(--white);
+    letter-spacing: 0.02em; transition: color 0.3s;
+  }
+  .mobile-menu a:hover { color: var(--amber); }
+  .mobile-menu .mobile-cta {
+    margin-top: 1rem; display: inline-block;
+    background: var(--terracotta); color: var(--white);
+    font-family: var(--font-body);
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.8rem 2rem; border-radius: var(--radius-sm);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; min-height: 100vh; min-height: 100svh;
+    overflow: hidden;
+    background: var(--ocean);
+  }
+
+  .hero-panel {
+    position: relative; z-index: 2;
+    background: transparent;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 7rem 1.5rem 3rem;
+    min-height: 100vh; min-height: 100svh;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    .hero-panel { justify-content: center; padding: 4rem 3rem; }
+  }
+  @media (min-width: 1024px) {
+    .hero-panel { padding: 4rem 5rem; }
+  }
+
+  .hero-media {
+    position: absolute; inset: 0; z-index: 0;
+    overflow: hidden;
+  }
+
+  .hero-panel::before {
+    content: ''; position: absolute;
+    top: -80px; right: -80px;
+    width: 260px; height: 260px;
+    border: 2px solid rgba(232,163,23,0.12);
+    border-radius: 50%; pointer-events: none;
+  }
+  .hero-panel::after {
+    content: ''; position: absolute;
+    bottom: 15%; left: -40px;
+    width: 120px; height: 120px;
+    border: 1.5px solid rgba(255,255,255,0.06);
+    transform: rotate(45deg); pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 1.5rem;
+    overflow: hidden;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.3), 0 2px 16px rgba(0,0,0,0.15);
+  }
+  .hero-eyebrow span { display: inline-block; transform: translateY(100%); }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 9vw, 5.5rem);
+    line-height: 1.02; letter-spacing: -0.01em;
+    color: var(--white); margin-bottom: 1.5rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.25), 0 4px 40px rgba(0,0,0,0.15);
+  }
+  .hero-title .line { display: block; overflow: hidden; }
+  .hero-title .line-inner { display: block; transform: translateY(110%); }
+  .hero-title .accent { color: var(--amber); }
+
+  .hero-sub {
+    font-size: clamp(0.92rem, 2vw, 1.1rem);
+    font-weight: 300; line-height: 1.75;
+    color: rgba(255,255,255,0.92); max-width: 440px;
+    margin-bottom: 2.5rem;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.2), 0 2px 20px rgba(0,0,0,0.12);
+  }
+  .hero-sub span { display: inline-block; opacity: 0; }
+
+  .hero-cta-group {
+    display: flex; align-items: center;
+    gap: 0.75rem; flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--terracotta); color: var(--white);
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.9rem 1.8rem; border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+  .btn-primary:hover {
+    background: var(--terracotta-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(192,74,44,0.4);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary svg { width: 14px; height: 14px; }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(20,54,66,0.15); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    color: var(--white);
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.85rem 1.5rem; border-radius: var(--radius-sm);
+    border: 1.5px solid rgba(255,255,255,0.3); cursor: pointer;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .btn-outline:hover {
+    border-color: var(--amber);
+    background: rgba(232,163,23,0.15);
+  }
+  .btn-outline svg { width: 12px; height: 12px; }
+
+  /* Hero media — full-bleed video behind text */
+  .hero-media video, .hero-media img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  /* Subtle gradient: dark bottom for text, slight dark top-left */
+  .hero-media::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(20,54,66,0.15) 0%, transparent 30%, transparent 50%, rgba(20,54,66,0.55) 85%, rgba(20,54,66,0.8) 100%),
+      linear-gradient(90deg, rgba(20,54,66,0.2) 0%, transparent 40%);
+    z-index: 1; pointer-events: none;
+  }
+  /* Mobile: slightly stronger overlay for readability */
+  @media (max-width: 767px) {
+    .hero-media::after {
+      background:
+        linear-gradient(180deg, rgba(20,54,66,0.1) 0%, transparent 25%, transparent 45%, rgba(20,54,66,0.5) 75%, rgba(20,54,66,0.8) 100%);
+    }
+  }
+
+  .hero-scroll-hint {
+    position: absolute; bottom: 2rem; right: 2rem;
+    z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.3);
+  }
+  .hero-scroll-hint span {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255,255,255,0.6);
+  }
+  .hero-scroll-line {
+    width: 1px; height: 32px;
+    background: rgba(255,255,255,0.2);
+    position: relative; overflow: hidden;
+  }
+  .hero-scroll-line::after {
+    content: ''; position: absolute; top: -100%; left: 0;
+    width: 100%; height: 50%; background: var(--amber);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine { 0% { top: -50%; } 100% { top: 150%; } }
+
+  /* ─── INFINITE MARQUEE ─── */
+  .marquee-section {
+    overflow: hidden;
+    padding: 1.5rem 0;
+    background: var(--bg-cream);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+  .marquee-item {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 0 2rem;
+    white-space: nowrap;
+  }
+  .marquee-text {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--text-dark);
+    letter-spacing: -0.01em;
+  }
+  .marquee-text .accent { color: var(--terracotta); }
+  .marquee-dot {
+    width: 8px; height: 8px;
+    background: var(--amber);
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .marquee-text.outlined {
+    -webkit-text-stroke: 1.5px var(--text-dark);
+    color: transparent;
+  }
+
+  /* ─── MANIFESTO ─── */
+  .manifesto {
+    padding: 3.5rem 1.5rem 3rem;
+    text-align: center; position: relative;
+    background: var(--bg-cream);
+  }
+  @media (min-width: 768px) { .manifesto { padding: 4.5rem 3rem 4rem; } }
+
+  .manifesto-label {
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 2rem;
+  }
+  .manifesto-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 3.2rem);
+    line-height: 1.25; letter-spacing: -0.01em;
+    color: var(--text-dark); max-width: 850px; margin: 0 auto;
+  }
+  .manifesto-text .word { display: inline-block; opacity: 0.08; transition: opacity 0.15s; }
+  .manifesto-text .word.revealed { opacity: 1; }
+  .manifesto-text .accent { color: var(--terracotta); }
+
+  /* ─── COMPASS ROSE ─── */
+  .compass-wrap {
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .compass-rose {
+    width: 48px; height: 48px; opacity: 0.15;
+    flex-shrink: 0;
+  }
+  @media (min-width: 768px) {
+    .compass-rose { width: 60px; height: 60px; }
+  }
+
+  /* ─── DESTINATIONS ─── */
+  .destinations {
+    padding: 4rem 1.5rem;
+    position: relative;
+    background: var(--bg-linen);
+  }
+  @media (min-width: 768px) { .destinations { padding: 6rem 3rem; } }
+
+  .dest-header {
+    display: flex; flex-direction: column; gap: 0.75rem;
+    margin-bottom: 3rem;
+    max-width: 1400px; margin-left: auto; margin-right: auto;
+  }
+  @media (min-width: 768px) {
+    .dest-header {
+      flex-direction: row; align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+  .dest-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    letter-spacing: -0.01em; color: var(--text-dark);
+  }
+  .dest-header h2 .accent { color: var(--amber-deep); }
+  .dest-header p {
+    font-size: 0.85rem; color: var(--text-mid);
+    max-width: 260px; font-weight: 300;
+  }
+  @media (min-width: 768px) { .dest-header p { text-align: right; } }
+
+  .dest-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  @media (min-width: 640px) { .dest-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) {
+    .dest-grid { grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+  }
+
+  .dest-card {
+    position: relative; border-radius: var(--radius-md); overflow: hidden;
+    cursor: pointer; background: var(--bg-sand);
+    min-height: 300px;
+    transition: transform 0.5s var(--ease-out), box-shadow 0.4s;
+    transform-style: preserve-3d;
+  }
+  @media (min-width: 1024px) {
+    .dest-card.span-8 { grid-column: span 8; min-height: 520px; }
+    .dest-card.span-4 { grid-column: span 4; min-height: 520px; }
+    .dest-card.span-6 { grid-column: span 6; min-height: 400px; }
+    .dest-card.span-3 { grid-column: span 3; min-height: 400px; }
+  }
+  @media (max-width: 639px) {
+    .dest-card { min-height: 260px; }
+    .dest-card:first-child { min-height: 320px; }
+  }
+
+  .dest-card:hover { box-shadow: var(--shadow-lg); }
+
+  .dest-card-img {
+    position: absolute; inset: 0; overflow: hidden;
+  }
+  .dest-card-img img {
+    transition: transform 0.7s var(--ease-out);
+    will-change: transform;
+    transform: scale(1.08);
+  }
+  .dest-card:hover .dest-card-img img { transform: scale(1.14); }
+
+  .dest-card-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+      180deg,
+      transparent 10%,
+      rgba(20,54,66,0.5) 60%,
+      rgba(20,54,66,0.8) 100%
+    );
+  }
+
+  .dest-card-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 2; padding: 1.5rem;
+  }
+
+  .dest-card-coords {
+    font-family: var(--font-mono);
+    font-size: 0.7rem; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.5); margin-bottom: 0.4rem;
+  }
+  .dest-card-tag {
+    display: inline-block;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 0.5rem;
+  }
+  .dest-card-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    color: var(--white); letter-spacing: -0.01em;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.15);
+  }
+  .dest-card-meta {
+    font-size: 0.75rem; color: rgba(255,255,255,0.65); font-weight: 300;
+  }
+  .dest-card-price {
+    display: inline-block; margin-top: 0.6rem;
+    font-size: 0.7rem; font-weight: 600; color: var(--white);
+    background: var(--terracotta); padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-sm); letter-spacing: 0.04em;
+  }
+
+  /* ─── PARALLAX STRIP ─── */
+  .parallax-strip {
+    position: relative;
+    height: 70vh; min-height: 400px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  @media (min-width: 768px) { .parallax-strip { height: 80vh; } }
+  .parallax-strip-bg {
+    position: absolute; inset: -20%; z-index: 0;
+  }
+  .parallax-strip-bg img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .parallax-strip-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(20,54,66,0.5) 0%, rgba(192,74,44,0.35) 50%, rgba(20,54,66,0.6) 100%);
+  }
+  .parallax-strip-content {
+    position: relative; z-index: 2;
+    text-align: center; padding: 2rem 1.5rem;
+    max-width: 700px;
+  }
+  .parallax-strip-content h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    color: var(--white); letter-spacing: -0.01em;
+    line-height: 1.05; margin-bottom: 1rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+  .parallax-strip-content h2 .accent { color: var(--amber); }
+  .parallax-strip-content p {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    color: rgba(255,255,255,0.85); font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* ─── COLOR BAND ─── */
+  .color-band {
+    background: var(--ocean);
+    padding: 4rem 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  @media (min-width: 768px) { .color-band { padding: 5rem 3rem; } }
+
+  .color-band-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem; text-align: center;
+  }
+  @media (min-width: 768px) { .color-band-inner { grid-template-columns: repeat(4, 1fr); } }
+
+  .stat-item { padding: 0.5rem 0; }
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: var(--white); letter-spacing: -0.02em;
+  }
+  .stat-number .suffix { color: var(--amber); }
+  .stat-label {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55); margin-top: 0.4rem;
+  }
+
+  .color-band::before {
+    content: ''; position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border: 1.5px solid rgba(232,163,23,0.1);
+    border-radius: 50%; pointer-events: none;
+  }
+  .color-band::after {
+    content: ''; position: absolute;
+    bottom: -80px; left: -40px;
+    width: 140px; height: 140px;
+    border: 1.5px solid rgba(255,255,255,0.04);
+    border-radius: 50%; pointer-events: none;
+  }
+
+  /* ─── CULTURE MASONRY ─── */
+  .culture-section {
+    padding: 3.5rem 1.5rem;
+    background: var(--bg-linen);
+    position: relative;
+  }
+  @media (min-width: 768px) { .culture-section { padding: 4.5rem 3rem; } }
+
+  .culture-header {
+    max-width: 1400px; margin: 0 auto 3rem;
+    text-align: center;
+  }
+  .culture-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: var(--text-dark); letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+  .culture-header h2 .accent { color: var(--terracotta); }
+  .culture-header p {
+    font-size: 0.9rem; color: var(--text-mid); font-weight: 300;
+    max-width: 500px; margin: 0 auto;
+  }
+
+  .culture-grid {
+    max-width: 1400px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) { .culture-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .culture-grid { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
+
+  .culture-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-sand);
+    cursor: pointer;
+    transition: transform 0.5s var(--ease-out), box-shadow 0.4s;
+  }
+  .culture-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .culture-card.tall { min-height: 380px; }
+  .culture-card.short { min-height: 260px; }
+  @media (max-width: 639px) {
+    .culture-card.tall, .culture-card.short { min-height: 240px; }
+  }
+
+  .culture-card-img {
+    position: absolute; inset: 0; overflow: hidden;
+  }
+  .culture-card-img img {
+    transition: transform 0.7s var(--ease-out);
+    transform: scale(1.05);
+  }
+  .culture-card:hover .culture-card-img img { transform: scale(1.12); }
+
+  .culture-card-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, transparent 40%, rgba(26,14,8,0.65) 100%);
+  }
+
+  .culture-card-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 2; padding: 1.25rem;
+  }
+  .culture-card-tag {
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 0.35rem;
+  }
+  .culture-card-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--white); letter-spacing: -0.01em;
+  }
+
+  /* ─── VIDEO SHOWCASE ─── */
+  .video-section {
+    padding: 4rem 0;
+    background: var(--bg-cream);
+    position: relative;
+  }
+  @media (min-width: 768px) { .video-section { padding: 6rem 0; } }
+
+  .video-section-header {
+    padding: 0 1.5rem 2rem;
+    max-width: 1400px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  @media (min-width: 768px) {
+    .video-section-header {
+      flex-direction: row; align-items: flex-end;
+      justify-content: space-between; padding: 0 3rem 2rem;
+    }
+  }
+  .video-section-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--text-dark);
+  }
+  .video-section-header h2 .accent { color: var(--ocean-light); }
+  .video-section-hint {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  .video-track {
+    display: flex; gap: 1rem;
+    padding: 0 1.5rem;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none; -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (min-width: 768px) { .video-track { padding: 0 3rem; gap: 1.5rem; } }
+  .video-track::-webkit-scrollbar { display: none; }
+
+  .video-card {
+    flex: 0 0 auto; width: 280px;
+    border-radius: var(--radius-md); overflow: hidden;
+    background: var(--white); scroll-snap-align: start;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.4s var(--ease-out), box-shadow 0.3s;
+  }
+  @media (min-width: 768px) { .video-card { width: 360px; } }
+  @media (min-width: 1024px) { .video-card { width: 400px; } }
+
+  .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .video-card-video {
+    position: relative; width: 100%; height: 170px;
+    overflow: hidden; background: var(--bg-sand);
+  }
+  @media (min-width: 768px) { .video-card-video { height: 220px; } }
+  .video-card-video video {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .video-card-badge {
+    position: absolute; top: 0.75rem; left: 0.75rem; z-index: 3;
+    background: rgba(20,54,66,0.6);
+    backdrop-filter: blur(6px);
+    color: var(--white);
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 0.3rem 0.6rem; border-radius: var(--radius-sm);
+  }
+
+  .video-card-info { padding: 1rem 1.25rem; }
+  .video-card-title {
+    font-family: var(--font-display);
+    font-size: 1rem; color: var(--text-dark);
+    letter-spacing: -0.01em; margin-bottom: 0.15rem;
+  }
+  .video-card-sub {
+    font-size: 0.75rem; color: var(--text-light);
+    font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ─── SPLIT STORIES ─── */
+  .split-stories {
+    background: var(--bg-linen);
+  }
+
+  .split-story {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  @media (min-width: 768px) {
+    .split-story { grid-template-columns: 1fr 1fr; }
+  }
+  .split-story:nth-child(even) .split-story-media { order: -1; }
+
+  .split-story-media {
+    position: relative; overflow: hidden;
+    min-height: 40vh;
+  }
+  @media (min-width: 768px) { .split-story-media { min-height: auto; } }
+
+  .split-story-media video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .split-story-media::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(20,54,66,0.08);
+  }
+
+  .split-story-text {
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  @media (min-width: 768px) { .split-story-text { padding: 4rem 3rem; } }
+  @media (min-width: 1024px) { .split-story-text { padding: 4rem 5rem; } }
+
+  .split-story-number {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 6rem);
+    color: var(--terracotta-light);
+    line-height: 1; margin-bottom: 0.5rem;
+  }
+  .split-story-tag {
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 1rem;
+  }
+  .split-story-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--text-dark); letter-spacing: -0.01em;
+    line-height: 1.15; margin-bottom: 1rem;
+  }
+  .split-story-desc {
+    font-size: 0.9rem; color: var(--text-mid);
+    line-height: 1.75; font-weight: 300;
+    max-width: 420px; margin-bottom: 1.5rem;
+  }
+  .split-story-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--terracotta);
+    transition: gap 0.3s;
+  }
+  .split-story-link:hover { gap: 0.8rem; }
+  .split-story-link svg { width: 14px; height: 14px; }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials {
+    padding: 3.5rem 1.5rem;
+    background: var(--bg-cream);
+    position: relative;
+  }
+  @media (min-width: 768px) { .testimonials { padding: 4.5rem 3rem; } }
+
+  .testimonials-header {
+    text-align: center; margin-bottom: 3rem;
+  }
+  .testimonials-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: var(--text-dark); letter-spacing: -0.01em;
+  }
+  .testimonials-header h2 .accent { color: var(--amber-deep); }
+
+  .testimonials-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 640px) { .testimonials-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .testimonials-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .testimonial-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: transform 0.4s var(--ease-out), box-shadow 0.3s;
+  }
+  .testimonial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  .testimonial-card::before {
+    content: '"';
+    font-family: var(--font-display);
+    font-size: 4rem;
+    color: var(--terracotta-light);
+    position: absolute; top: 0.5rem; left: 1.5rem;
+    line-height: 1;
+  }
+  .testimonial-text {
+    font-size: 0.9rem; line-height: 1.75;
+    color: var(--text-body); font-weight: 300;
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+    padding-top: 1rem;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .testimonial-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%; background: var(--bg-sand);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 0.9rem; color: var(--terracotta);
+  }
+  .testimonial-name {
+    font-size: 0.8rem; font-weight: 600; color: var(--text-dark);
+  }
+  .testimonial-trip {
+    font-size: 0.65rem; color: var(--text-light);
+    letter-spacing: 0.06em;
+  }
+
+  /* ─── EXPERIENCES ─── */
+  .experiences {
+    padding: 3.5rem 1.5rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  @media (min-width: 768px) { .experiences { padding: 4.5rem 3rem; } }
+
+  .exp-header { margin-bottom: 3rem; }
+  .exp-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: var(--text-dark);
+  }
+  .exp-header h2 .accent { color: var(--terracotta); }
+
+  .exp-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) { .exp-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .exp-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .exp-card {
+    background: var(--white); border-radius: var(--radius-md);
+    padding: 2rem; border: 1px solid var(--border);
+    transition: transform 0.4s var(--ease-out), box-shadow 0.3s, border-color 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .exp-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .exp-card-accent {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .exp-card.t-terracotta .exp-card-accent { background: var(--terracotta); }
+  .exp-card.t-ocean .exp-card-accent { background: var(--ocean-light); }
+  .exp-card.t-amber .exp-card-accent { background: var(--amber); }
+
+  .exp-icon {
+    width: 48px; height: 48px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .exp-icon.terracotta { background: var(--terracotta-light); color: var(--terracotta); }
+  .exp-icon.ocean { background: var(--ocean-pale); color: var(--ocean-light); }
+  .exp-icon.amber { background: var(--amber-light); color: var(--amber-deep); }
+  .exp-icon svg { width: 22px; height: 22px; }
+
+  .exp-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem; color: var(--text-dark);
+    letter-spacing: -0.01em; margin-bottom: 0.5rem;
+  }
+  .exp-card p {
+    font-size: 0.85rem; line-height: 1.7;
+    color: var(--text-mid); font-weight: 300;
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 3.5rem 1.5rem;
+    text-align: center; position: relative; overflow: hidden;
+    background: var(--terracotta);
+  }
+  @media (min-width: 768px) { .cta-section { padding: 4.5rem 3rem; } }
+
+  .cta-section::before {
+    content: ''; position: absolute;
+    top: -100px; left: -100px;
+    width: 300px; height: 300px;
+    border: 1.5px solid rgba(255,255,255,0.06);
+    border-radius: 50%; pointer-events: none;
+  }
+  .cta-section::after {
+    content: ''; position: absolute;
+    bottom: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border: 1.5px solid rgba(255,255,255,0.05);
+    transform: rotate(45deg); pointer-events: none;
+  }
+
+  .cta-content {
+    position: relative; z-index: 1; max-width: 580px; margin: 0 auto;
+  }
+  .cta-content h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    color: var(--white); letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+  }
+  .cta-content h2 .accent { color: var(--amber); }
+  .cta-content p {
+    font-size: 1rem; color: rgba(255,255,255,0.75);
+    max-width: 440px; margin: 0 auto 2rem;
+    font-weight: 300; line-height: 1.7;
+  }
+  .btn-white {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--white); color: var(--terracotta);
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.9rem 2rem; border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .btn-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+  .btn-white svg { width: 14px; height: 14px; }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    padding: 4rem 1.5rem 2rem;
+    background: var(--ocean);
+    color: rgba(255,255,255,0.6);
+  }
+  @media (min-width: 768px) { .footer { padding: 5rem 3rem 2rem; } }
+
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  @media (min-width: 640px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .footer-inner { grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; } }
+
+  .footer-brand h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem; color: var(--white);
+    letter-spacing: 0.02em; margin-bottom: 0.75rem;
+  }
+  .footer-brand h3 .accent { color: var(--amber); }
+  .footer-brand p {
+    font-size: 0.85rem; line-height: 1.7;
+    max-width: 280px;
+  }
+  .footer-col h4 {
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(255,255,255,0.35); margin-bottom: 1rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.5rem; }
+  .footer-col a {
+    font-size: 0.85rem; transition: color 0.3s;
+  }
+  .footer-col a:hover { color: var(--amber); }
+
+  .footer-bottom {
+    max-width: 1200px; margin: 3rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 1rem;
+  }
+  @media (min-width: 768px) {
+    .footer-bottom { flex-direction: row; justify-content: space-between; }
+  }
+  .footer-bottom p { font-size: 0.75rem; }
+  .footer-socials { display: flex; gap: 0.75rem; }
+  .footer-socials a {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .footer-socials a:hover {
+    border-color: var(--amber);
+    background: rgba(232,163,23,0.08);
+  }
+  .footer-socials svg { width: 14px; height: 14px; color: rgba(255,255,255,0.5); }
+
+  /* ─── REDUCED MOTION ─── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    .hero-scroll-line::after { animation: none; }
+    .dest-card-img img { transition: none; }
+    .grain { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#hero" class="skip-link">Skip to content</a>
+
+<!-- Film grain overlay -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="loader-brand" id="loaderBrand">
+    <span>W</span><span>a</span><span>n</span><span>d</span><span>e</span><span>r</span><span class="accent">l</span><span>u</span><span>x</span>
+  </div>
+  <div class="loader-bar-track"><div class="loader-bar-fill" id="loaderBar"></div></div>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <a href="#" class="nav-logo">Wander<span class="accent">lux</span></a>
+  <ul class="nav-links">
+    <li><a href="#destinations">Destinations</a></li>
+    <li><a href="#culture">Culture</a></li>
+    <li><a href="#videos">Cinematic</a></li>
+    <li><a href="#stories">Stories</a></li>
+    <li><a href="#experiences">Experiences</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  <button class="nav-burger" id="navBurger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#destinations">Destinations</a>
+  <a href="#culture">Culture</a>
+  <a href="#videos">Cinematic</a>
+  <a href="#stories">Stories</a>
+  <a href="#experiences">Experiences</a>
+  <a href="#contact" class="mobile-cta">Book Now</a>
+</div>
+
+<!-- Hero: Split layout — panel + video -->
+<section class="hero" id="hero">
+  <div class="hero-panel">
+    <div class="hero-eyebrow"><span>Curated journeys since 2018</span></div>
+    <h1 class="hero-title">
+      <span class="line"><span class="line-inner">Travel Beyond</span></span>
+      <span class="line"><span class="line-inner">The <span class="accent">Ordinary</span></span></span>
+    </h1>
+    <p class="hero-sub"><span>Immersive journeys to the world's most extraordinary destinations. Every frame, a masterpiece. Every moment, unforgettable.</span></p>
+    <div class="hero-cta-group">
+      <a href="#destinations" class="btn-primary">Explore Journeys <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="#videos" class="btn-outline"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21"/></svg> Watch Reel</a>
+    </div>
+  </div>
+  <div class="hero-media">
+    <video autoplay muted loop playsinline id="heroVideo" poster="https://images.pexels.com/photos/4784345/pexels-photo-4784345.jpeg?auto=compress&cs=tinysrgb&w=1920">
+    </video>
+    <img src="https://images.pexels.com/photos/4784345/pexels-photo-4784345.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Aerial view of turquoise tropical ocean" id="heroFallbackImg" style="z-index:-1;">
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Infinite Marquee -->
+<section class="marquee-section" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item"><span class="marquee-text">Explore</span><span class="marquee-dot"></span><span class="marquee-text outlined">Discover</span><span class="marquee-dot"></span><span class="marquee-text">Wander</span><span class="marquee-dot"></span><span class="marquee-text outlined">Dream</span><span class="marquee-dot"></span><span class="marquee-text">Journey</span><span class="marquee-dot"></span><span class="marquee-text outlined">Escape</span><span class="marquee-dot"></span></div>
+    <div class="marquee-item"><span class="marquee-text">Explore</span><span class="marquee-dot"></span><span class="marquee-text outlined">Discover</span><span class="marquee-dot"></span><span class="marquee-text">Wander</span><span class="marquee-dot"></span><span class="marquee-text outlined">Dream</span><span class="marquee-dot"></span><span class="marquee-text">Journey</span><span class="marquee-dot"></span><span class="marquee-text outlined">Escape</span><span class="marquee-dot"></span></div>
+    <div class="marquee-item"><span class="marquee-text">Explore</span><span class="marquee-dot"></span><span class="marquee-text outlined">Discover</span><span class="marquee-dot"></span><span class="marquee-text">Wander</span><span class="marquee-dot"></span><span class="marquee-text outlined">Dream</span><span class="marquee-dot"></span><span class="marquee-text">Journey</span><span class="marquee-dot"></span><span class="marquee-text outlined">Escape</span><span class="marquee-dot"></span></div>
+  </div>
+</section>
+
+<!-- Wave: Ocean → Cream -->
+<div class="wave-divider" aria-hidden="true">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+    <path d="M0,25 C180,55 360,5 540,30 C720,55 900,10 1080,35 C1260,55 1380,20 1440,30 L1440,60 L0,60Z" fill="#F5F0E8"/>
+  </svg>
+</div>
+
+<!-- Manifesto -->
+<section class="manifesto pattern-topo" id="manifesto">
+  <div class="manifesto-label">Our Philosophy</div>
+  <p class="manifesto-text" id="manifestoText">
+    We don't do ordinary. We craft cinematic journeys that transform the way you see the world — from volcanic peaks at dawn to bioluminescent shores at midnight.
+  </p>
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-diamond"></div>
+    <div class="ornament-line"></div>
+  </div>
+</section>
+
+<!-- Wave: Cream → Linen -->
+<div class="wave-divider" aria-hidden="true">
+  <svg viewBox="0 0 1440 40" preserveAspectRatio="none">
+    <path d="M0,20 C240,0 480,40 720,20 C960,0 1200,40 1440,20 L1440,40 L0,40Z" fill="#FAF7F2"/>
+  </svg>
+</div>
+
+<!-- Destinations -->
+<section class="destinations pattern-dots" id="destinations">
+  <div class="dest-header">
+    <div class="compass-wrap">
+      <svg class="compass-rose" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+        <circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="0.4" opacity="0.35"/>
+        <line x1="50" y1="2" x2="50" y2="98" stroke="currentColor" stroke-width="0.4" opacity="0.4"/>
+        <line x1="2" y1="50" x2="98" y2="50" stroke="currentColor" stroke-width="0.4" opacity="0.4"/>
+        <line x1="16" y1="16" x2="84" y2="84" stroke="currentColor" stroke-width="0.3" opacity="0.2"/>
+        <line x1="84" y1="16" x2="16" y2="84" stroke="currentColor" stroke-width="0.3" opacity="0.2"/>
+        <polygon points="50,6 46,22 54,22" fill="currentColor" opacity="0.35"/>
+        <text x="50" y="46" text-anchor="middle" font-size="5" fill="currentColor" opacity="0.3" font-family="Epilogue,sans-serif" font-weight="700">N</text>
+      </svg>
+      <h2>Curated <span class="accent">Destinations</span></h2>
+    </div>
+    <p>Hand-picked locations where extraordinary becomes everyday</p>
+  </div>
+  <div class="dest-grid" id="destGrid">
+    <!-- Cards injected by JS via Pexels API -->
+  </div>
+</section>
+
+<!-- Parallax Strip -->
+<section class="parallax-strip" id="parallaxStrip">
+  <div class="parallax-strip-bg" id="parallaxBg">
+    <img src="https://images.pexels.com/photos/36530316/pexels-photo-36530316.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Paragliding over mountains">
+  </div>
+  <div class="parallax-strip-overlay"></div>
+  <div class="parallax-strip-content">
+    <h2>Life Is Either A <span class="accent">Daring</span> Adventure Or Nothing</h2>
+    <p>From paragliding the Alps to diving bioluminescent bays — we curate the moments you'll tell stories about forever.</p>
+  </div>
+</section>
+
+<!-- Stats Color Band -->
+<section class="color-band" id="stats">
+  <div class="color-band-inner">
+    <div class="stat-item">
+      <div class="stat-number"><span class="counter" data-target="48">0</span><span class="suffix">+</span></div>
+      <div class="stat-label">Destinations</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number"><span class="counter" data-target="12">0</span><span class="suffix">K</span></div>
+      <div class="stat-label">Travelers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number"><span class="counter" data-target="98">0</span><span class="suffix">%</span></div>
+      <div class="stat-label">Satisfaction</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number"><span class="counter" data-target="7">0</span><span class="suffix">yr</span></div>
+      <div class="stat-label">Experience</div>
+    </div>
+  </div>
+</section>
+
+<!-- Culture & Culinary Masonry -->
+<section class="culture-section" id="culture">
+  <div class="culture-header">
+    <h2>The <span class="accent">Lifestyle</span></h2>
+    <p>From ancient markets to Michelin tables — the world through its flavors, art, and rituals</p>
+  </div>
+  <div class="culture-grid" id="cultureGrid">
+    <!-- Culture cards injected by JS -->
+  </div>
+</section>
+
+<!-- Video Showcase (auto-loop on scroll) -->
+<section class="video-section" id="videos">
+  <div class="video-section-header">
+    <h2>Cinematic <span class="accent">Reels</span></h2>
+    <span class="video-section-hint">Auto-plays on scroll</span>
+  </div>
+  <div class="video-track" id="videoTrack">
+    <!-- Video cards injected by JS -->
+  </div>
+</section>
+
+<!-- Split Stories -->
+<section class="split-stories" id="stories">
+  <div class="split-story">
+    <div class="split-story-text">
+      <div class="split-story-number">01</div>
+      <div class="split-story-tag">Scenic Rail</div>
+      <h3 class="split-story-title">The World's Most Beautiful Train Rides</h3>
+      <p class="split-story-desc">Glacier Express to the Trans-Siberian — rail journeys where the route is the destination. Watch landscapes unfold through panoramic windows as the world slows down.</p>
+      <a href="#" class="split-story-link">Read the story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="split-story-media">
+      <video autoplay muted loop playsinline poster="https://images.pexels.com/photos/20256853/pexels-photo-20256853.jpeg?auto=compress&cs=tinysrgb&w=800" class="auto-play-video">
+      </video>
+    </div>
+  </div>
+  <div class="split-story">
+    <div class="split-story-text">
+      <div class="split-story-number">02</div>
+      <div class="split-story-tag">Deep Nature</div>
+      <h3 class="split-story-title">Waterfalls That Take Your Breath Away</h3>
+      <p class="split-story-desc">Hidden cascades in Costa Rica's cloud forests to Iceland's thundering falls — nature's cathedrals carved in stone and mist. Each one a pilgrimage worth making.</p>
+      <a href="#" class="split-story-link">Read the story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="split-story-media">
+      <video autoplay muted loop playsinline poster="https://images.pexels.com/photos/5237694/pexels-photo-5237694.jpeg?auto=compress&cs=tinysrgb&w=800" class="auto-play-video">
+      </video>
+    </div>
+  </div>
+  <div class="split-story">
+    <div class="split-story-text">
+      <div class="split-story-number">03</div>
+      <div class="split-story-tag">Desert Silence</div>
+      <h3 class="split-story-title">Saharan Dunes At Golden Hour</h3>
+      <p class="split-story-desc">Endless sand sculpted by wind into perfect curves. At sunset, the desert glows amber and rose — a silence so profound it becomes its own kind of music.</p>
+      <a href="#" class="split-story-link">Read the story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="split-story-media">
+      <video autoplay muted loop playsinline poster="https://images.pexels.com/photos/4694737/pexels-photo-4694737.jpeg?auto=compress&cs=tinysrgb&w=800" class="auto-play-video">
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-header">
+    <h2>Traveler <span class="accent">Voices</span></h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <p class="testimonial-text">The Kyoto journey was transformative. Our guide led us through moss-covered temple gardens at dawn — no tourists, just silence and golden light. I wept at the beauty of it.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">S</div>
+        <div>
+          <div class="testimonial-name">Sarah Chen</div>
+          <div class="testimonial-trip">Kyoto, Japan — 8-day journey</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <p class="testimonial-text">Dinner on the rim of an active volcano in Santorini — that's not a metaphor. Wanderlux arranged a private chef, local wine, and a sunset that made time stop.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">M</div>
+        <div>
+          <div class="testimonial-name">Marcus Rivera</div>
+          <div class="testimonial-trip">Santorini, Greece — 5-day escape</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <p class="testimonial-text">The northern lights chase across Iceland was the most magical experience of my life. Four nights under Arctic skies, and on the last — the entire heavens danced green.</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">E</div>
+        <div>
+          <div class="testimonial-name">Elise Dubois</div>
+          <div class="testimonial-trip">Iceland — 5-day aurora chase</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experiences -->
+<section class="experiences" id="experiences">
+  <div class="exp-header">
+    <h2>The <span class="accent">Experience</span></h2>
+  </div>
+  <div class="exp-grid">
+    <div class="exp-card t-terracotta">
+      <div class="exp-card-accent"></div>
+      <div class="exp-icon terracotta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+      </div>
+      <h3>Private Guides</h3>
+      <p>Local experts who reveal hidden gems no guidebook mentions. Personalized itineraries crafted around your curiosity.</p>
+    </div>
+    <div class="exp-card t-ocean">
+      <div class="exp-card-accent"></div>
+      <div class="exp-icon ocean">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h3>Luxury Stays</h3>
+      <p>From overwater villas to clifftop retreats. Every accommodation hand-selected for its character, comfort, and view.</p>
+    </div>
+    <div class="exp-card t-amber">
+      <div class="exp-card-accent"></div>
+      <div class="exp-icon amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <h3>Exclusive Access</h3>
+      <p>Behind-the-scenes experiences — private temple ceremonies, volcano rim dinners, midnight aurora chases.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-content">
+    <h2>Begin Your <span class="accent">Journey</span></h2>
+    <p>Every extraordinary trip starts with a single conversation. Tell us where you dream of going.</p>
+    <a href="#" class="btn-white">Start Planning <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>Wander<span class="accent">lux</span></h3>
+      <p>Crafting cinematic travel experiences for the discerning explorer since 2018.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#destinations">Destinations</a></li>
+        <li><a href="#culture">Culture & Culinary</a></li>
+        <li><a href="#videos">Cinematic Reels</a></li>
+        <li><a href="#stories">Stories</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Sustainability</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Help Center</a></li>
+        <li><a href="#">Travel Insurance</a></li>
+        <li><a href="#">Cancellation Policy</a></li>
+        <li><a href="#">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Wanderlux. All rights reserved.</p>
+    <div class="footer-socials">
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+      <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ─── PEXELS API ───
+  var PEXELS_KEY = 'Z6FQxyokT22L5aj35yzNeaPaA5MHPwxRd3HCKCwm6rpfnLZfHQj0lGRk';
+
+  var DESTINATIONS = [
+    { name: 'Bali', tag: 'Indonesia', span: 'span-8', photoId: 35343781, price: 'From $4,200', meta: '7-day immersion', coords: '8.3405° S, 115.0920° E' },
+    { name: 'Santorini', tag: 'Greece', span: 'span-4', photoId: 15532995, price: 'From $5,800', meta: '5-day escape', coords: '36.3932° N, 25.4615° E' },
+    { name: 'Kyoto', tag: 'Japan', span: 'span-6', photoId: 16660223, price: 'From $4,800', meta: '8-day journey', coords: '35.0116° N, 135.7681° E' },
+    { name: 'Maldives', tag: 'Indian Ocean', span: 'span-6', photoId: 30037393, price: 'From $7,200', meta: '6-day retreat', coords: '3.2028° N, 73.2207° E' },
+    { name: 'Serengeti', tag: 'Tanzania', span: 'span-3', photoId: 35327195, price: 'From $6,500', meta: '10-day safari', coords: '2.3333° S, 34.8333° E' },
+    { name: 'Cappadocia', tag: 'Türkiye', span: 'span-3', photoId: 29205428, price: 'From $3,800', meta: '4-day wonder', coords: '38.6430° N, 34.8289° E' },
+    { name: 'Amalfi Coast', tag: 'Italy', span: 'span-4', photoId: 18771876, price: 'From $5,400', meta: '6-day voyage', coords: '40.6333° N, 14.6029° E' },
+    { name: 'Northern Lights', tag: 'Iceland', span: 'span-8', photoId: 35872623, price: 'From $4,600', meta: '5-day chase', coords: '64.1466° N, 21.9426° W' }
+  ];
+
+  var CULTURE = [
+    { title: 'Art of Sushi', tag: 'Culinary', photoId: 31150943, tall: true },
+    { title: 'Bordeaux Vines', tag: 'Wine', photoId: 2954929, tall: false },
+    { title: 'Marrakech Souks', tag: 'Culture', photoId: 35787276, tall: true },
+    { title: 'Renaissance Halls', tag: 'Art', photoId: 30489691, tall: false },
+    { title: 'Bali Gateways', tag: 'Heritage', photoId: 14475016, tall: false },
+    { title: 'Glacier Hikes', tag: 'Adventure', photoId: 4338103, tall: true },
+    { title: 'Moroccan Feasts', tag: 'Culinary', photoId: 31653073, tall: false },
+    { title: 'Vineyard Estates', tag: 'Wine', photoId: 13533959, tall: true }
+  ];
+
+  // Video IDs only — URLs fetched dynamically from Pexels API to avoid expired links
+  var VIDEO_DEFS = [
+    { title: 'Ocean Depths', sub: 'Aerial · Pacific Coast', videoId: 31879939, posterPhotoId: 4784345, badge: 'Loop' },
+    { title: 'Alpine Majesty', sub: 'Drone · Swiss Alps', videoId: 31115054, posterPhotoId: 20256853, badge: 'Loop' },
+    { title: 'Golden Hour', sub: 'Aerial · Tropics', videoId: 6073392, posterPhotoId: 3155643, badge: 'Loop' },
+    { title: 'Aurora Borealis', sub: 'Timelapse · Iceland', videoId: 14947495, posterPhotoId: 35872623, badge: 'Loop' },
+    { title: 'Skyward', sub: 'Aerial · Cappadocia', videoId: 18471085, posterPhotoId: 29205428, badge: 'Loop' },
+    { title: 'Coral Kingdom', sub: 'Underwater · Great Barrier Reef', videoId: 34293684, badge: 'Loop' },
+    { title: 'Paris Nights', sub: 'Night · Eiffel Tower', videoId: 10369746, badge: 'Loop' },
+    { title: 'Fjord Dreams', sub: 'Cruise · Norwegian Fjords', videoId: 30443146, badge: 'Loop' },
+    { title: 'Neon Tokyo', sub: 'Night · Shinjuku Streets', videoId: 30488069, badge: 'Loop' },
+    { title: 'Venice Canals', sub: 'Aerial · Grand Canal', videoId: 29913630, badge: 'Loop' }
+  ];
+
+  // Split story video IDs — also fetched dynamically
+  var SPLIT_VIDEOS = [
+    { videoId: 30537875, posterPhotoId: 20256853 },
+    { videoId: 31403165, posterPhotoId: 5237694 },
+    { videoId: 29660258, posterPhotoId: 4694737 }
+  ];
+
+  // ─── FETCH PEXELS PHOTO ───
+  function fetchPexelsPhoto(photoId) {
+    var cacheKey = 'wl_photo_' + photoId;
+    var cached = sessionStorage.getItem(cacheKey);
+    if (cached) return Promise.resolve(JSON.parse(cached));
+
+    return fetch('https://api.pexels.com/v1/photos/' + photoId, {
+      headers: { Authorization: PEXELS_KEY }
+    }).then(function(res) {
+      if (!res.ok) throw new Error('Pexels API ' + res.status);
+      return res.json();
+    }).then(function(data) {
+      var result = {
+        src: (data.src && data.src.large2x) || (data.src && data.src.large) || (data.src && data.src.original) || '',
+        alt: data.alt || 'Travel destination',
+        photographer: data.photographer || ''
+      };
+      sessionStorage.setItem(cacheKey, JSON.stringify(result));
+      return result;
+    }).catch(function(err) {
+      console.warn('Pexels fetch failed for', photoId, err);
+      return {
+        src: 'https://images.pexels.com/photos/' + photoId + '/pexels-photo-' + photoId + '.jpeg?auto=compress&cs=tinysrgb&w=1200',
+        alt: 'Travel destination', photographer: ''
+      };
+    });
+  }
+
+  // ─── BUILD DESTINATION CARDS ───
+  function buildDestGrid() {
+    var grid = document.getElementById('destGrid');
+    var promises = DESTINATIONS.map(function(dest) {
+      return fetchPexelsPhoto(dest.photoId).then(function(photo) {
+        var card = document.createElement('div');
+        card.className = 'dest-card ' + dest.span;
+        card.setAttribute('role', 'article');
+        card.innerHTML =
+          '<div class="dest-card-img">' +
+            '<img src="' + photo.src + '" alt="' + photo.alt + '" loading="lazy">' +
+          '</div>' +
+          '<div class="dest-card-overlay"></div>' +
+          '<div class="dest-card-content">' +
+            '<div class="dest-card-coords">' + dest.coords + '</div>' +
+            '<div class="dest-card-tag">' + dest.tag + '</div>' +
+            '<div class="dest-card-name">' + dest.name + '</div>' +
+            '<div class="dest-card-meta">' + dest.meta + '</div>' +
+            '<div class="dest-card-price">' + dest.price + '</div>' +
+          '</div>';
+        return card;
+      });
+    });
+    return Promise.all(promises).then(function(cards) {
+      grid.innerHTML = '';
+      cards.forEach(function(c) { grid.appendChild(c); });
+      return cards;
+    });
+  }
+
+  // ─── BUILD CULTURE GRID ───
+  function buildCultureGrid() {
+    var grid = document.getElementById('cultureGrid');
+    var promises = CULTURE.map(function(item) {
+      return fetchPexelsPhoto(item.photoId).then(function(photo) {
+        var card = document.createElement('div');
+        card.className = 'culture-card ' + (item.tall ? 'tall' : 'short');
+        card.innerHTML =
+          '<div class="culture-card-img">' +
+            '<img src="' + photo.src + '" alt="' + item.title + '" loading="lazy">' +
+          '</div>' +
+          '<div class="culture-card-overlay"></div>' +
+          '<div class="culture-card-content">' +
+            '<div class="culture-card-tag">' + item.tag + '</div>' +
+            '<div class="culture-card-title">' + item.title + '</div>' +
+          '</div>';
+        return card;
+      });
+    });
+    return Promise.all(promises).then(function(cards) {
+      grid.innerHTML = '';
+      cards.forEach(function(c) { grid.appendChild(c); });
+      return cards;
+    });
+  }
+
+  // ─── FETCH PEXELS VIDEO URL ───
+  function fetchPexelsVideo(videoId) {
+    var cacheKey = 'wl_video_' + videoId;
+    var cached = sessionStorage.getItem(cacheKey);
+    if (cached) return Promise.resolve(JSON.parse(cached));
+
+    return fetch('https://api.pexels.com/videos/videos/' + videoId, {
+      headers: { Authorization: PEXELS_KEY }
+    }).then(function(res) {
+      if (!res.ok) throw new Error('Pexels Video API ' + res.status);
+      return res.json();
+    }).then(function(data) {
+      var files = data.video_files || [];
+      // Pick the best HD file (prefer 1920+, then 1280+)
+      var best = files.filter(function(f) { return (f.width || 0) >= 1920; })[0]
+                   || files.filter(function(f) { return (f.width || 0) >= 1280; })[0]
+                   || files[0];
+      var result = { src: best ? best.link : '', width: best ? best.width : 0 };
+      if (result.src) sessionStorage.setItem(cacheKey, JSON.stringify(result));
+      return result;
+    }).catch(function(err) {
+      console.warn('Pexels video fetch failed for', videoId, err);
+      return { src: '', width: 0 };
+    });
+  }
+
+  // ─── BUILD VIDEO CARDS (dynamic URLs) ───
+  function buildVideoTrack() {
+    var track = document.getElementById('videoTrack');
+    var promises = VIDEO_DEFS.map(function(v, i) {
+      var videoPromise = fetchPexelsVideo(v.videoId);
+      var posterPromise = v.posterPhotoId
+        ? fetchPexelsPhoto(v.posterPhotoId).then(function(p) { return p.src; }).catch(function() { return ''; })
+        : Promise.resolve('');
+
+      return Promise.all([videoPromise, posterPromise]).then(function(results) {
+        var videoData = results[0];
+        var posterSrc = results[1];
+        var card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML =
+          '<div class="video-card-video">' +
+            '<video muted loop playsinline preload="metadata"' + (posterSrc ? ' poster="' + posterSrc + '"' : '') + ' id="vCard' + i + '">' +
+              (videoData.src ? '<source src="' + videoData.src + '" type="video/mp4">' : '') +
+            '</video>' +
+            '<div class="video-card-badge">' + v.badge + '</div>' +
+          '</div>' +
+          '<div class="video-card-info">' +
+            '<div class="video-card-title">' + v.title + '</div>' +
+            '<div class="video-card-sub">' + v.sub + '</div>' +
+          '</div>';
+        return card;
+      });
+    });
+
+    return Promise.all(promises).then(function(cards) {
+      track.innerHTML = '';
+      cards.forEach(function(c) { if (c) track.appendChild(c); });
+      return cards;
+    });
+  }
+
+  // ─── AUTO-PLAY VIDEOS ON SCROLL (IntersectionObserver) ───
+  function initAutoPlayVideos() {
+    var allVideos = document.querySelectorAll('.video-card-video video, .split-story-media video');
+    if (!('IntersectionObserver' in window)) {
+      // Fallback: just play them all
+      allVideos.forEach(function(v) { var p = v.play(); if (p) p.catch(function(){}); });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var p = entry.target.play();
+          if (p) p.catch(function() {});
+        } else {
+          entry.target.pause();
+        }
+      });
+    }, { threshold: 0.4 });
+
+    allVideos.forEach(function(v) { observer.observe(v); });
+  }
+
+  // ─── FORCE HERO VIDEO AUTOPLAY (with dynamic URL fetch) ───
+  function forceHeroVideo() {
+    var video = document.getElementById('heroVideo');
+    var fallback = document.getElementById('heroFallbackImg');
+    if (!video) return;
+
+    // Fetch hero video URL dynamically from Pexels API
+    fetchPexelsVideo(31879939).then(function(data) {
+      if (data.src) {
+        var source = document.createElement('source');
+        source.src = data.src;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        video.load();
+      }
+    });
+
+    function tryPlay() {
+      if (!video.paused) return;
+      var p = video.play();
+      if (p) p.catch(function() {});
+    }
+
+    // Try play after source is loaded
+    video.addEventListener('loadeddata', function() { tryPlay(); });
+    video.addEventListener('canplay', function() { tryPlay(); });
+
+    tryPlay();
+
+    var events = ['click', 'touchstart', 'touchend', 'scroll', 'keydown', 'pointerdown'];
+    var retryHandler = function() {
+      tryPlay();
+      events.forEach(function(ev) { document.removeEventListener(ev, retryHandler); });
+    };
+    events.forEach(function(ev) {
+      document.addEventListener(ev, retryHandler, { once: true });
+    });
+
+    var retryCount = 0;
+    var retryInterval = setInterval(function() {
+      tryPlay();
+      retryCount++;
+      if (retryCount >= 20 || !video.paused) clearInterval(retryInterval);
+    }, 500);
+
+    // Show fallback image if video fails
+    video.addEventListener('error', function() {
+      if (fallback) {
+        video.style.display = 'none';
+        fallback.style.display = 'block';
+        fallback.style.position = 'absolute';
+        fallback.style.inset = '0';
+        fallback.style.width = '100%';
+        fallback.style.height = '100%';
+        fallback.style.objectFit = 'cover';
+      }
+    });
+    // Also show fallback if video stalls (no data after 3s)
+    setTimeout(function() {
+      if (video.readyState < 2 && fallback) {
+        video.style.display = 'none';
+        fallback.style.display = 'block';
+        fallback.style.position = 'absolute';
+        fallback.style.inset = '0';
+        fallback.style.width = '100%';
+        fallback.style.height = '100%';
+        fallback.style.objectFit = 'cover';
+      }
+    }, 3000);
+  }
+
+  // ─── 3D CARD TILT ───
+  function init3DTilt() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if ('ontouchstart' in window) return;
+
+    document.querySelectorAll('.dest-card').forEach(function(card) {
+      card.addEventListener('mouseenter', function() {
+        card.style.transition = 'box-shadow 0.4s';
+      });
+      card.addEventListener('mousemove', function(e) {
+        var rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = 'perspective(800px) rotateY(' + (x * 4) + 'deg) rotateX(' + (-y * 4) + 'deg) translateY(-5px)';
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.transition = '';
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // ─── LOADER ───
+  function runLoader() {
+    var letters = document.querySelectorAll('#loaderBrand span');
+    var bar = document.getElementById('loaderBar');
+    var loader = document.getElementById('loader');
+
+    var tl = gsap.timeline();
+
+    tl.to(letters, {
+      y: 0, opacity: 1, duration: 0.6, stagger: 0.04, ease: 'expo.out'
+    });
+
+    tl.to(bar, {
+      width: '100%', duration: 1, ease: 'power2.inOut'
+    }, '-=0.3');
+
+    var cardsPromise = buildDestGrid();
+    var culturePromise = buildCultureGrid();
+    var videosPromise = buildVideoTrack();
+
+    var tlDone = new Promise(function(resolve) {
+      tl.eventCallback('onComplete', resolve);
+    });
+
+    Promise.all([cardsPromise, culturePromise, videosPromise, tlDone]).then(function(results) {
+      var cards = results[0];
+
+      tl.to(loader, {
+        opacity: 0, duration: 0.6, ease: 'power2.inOut',
+        onComplete: function() {
+          loader.style.display = 'none';
+          initAnimations(cards);
+          // Refresh ScrollTrigger after all dynamic content is in the DOM
+          ScrollTrigger.refresh();
+        }
+      });
+    });
+  }
+
+  // ─── LENIS ───
+  function initLenis() {
+    var lenis = new Lenis({
+      duration: 1.2,
+      easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      orientation: 'vertical',
+      smoothWheel: true,
+    });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    return lenis;
+  }
+
+  // ─── ANIMATIONS ───
+  function initAnimations(cards) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) { initLenis(); return; }
+
+    var lenis = initLenis();
+
+    // Nav scroll behavior
+    var nav = document.getElementById('nav');
+    ScrollTrigger.create({
+      start: 'top -80',
+      onUpdate: function() { nav.classList.toggle('scrolled', window.scrollY > 80); }
+    });
+
+    // Hero entrance
+    var heroTl = gsap.timeline({ delay: 0.3 });
+    heroTl.to('.hero-eyebrow span', { y: 0, duration: 0.8, ease: 'expo.out' })
+      .to('.hero-title .line-inner', { y: 0, duration: 1, stagger: 0.15, ease: 'expo.out' }, '-=0.5')
+      .to('.hero-sub span', { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+      .from('.hero-cta-group', { opacity: 0, y: 20, duration: 0.6, ease: 'expo.out' }, '-=0.3')
+      .from('.hero-scroll-hint', { opacity: 0, duration: 0.6 }, '-=0.2');
+
+    // ─── INFINITE MARQUEE ───
+    var marqueeTrack = document.getElementById('marqueeTrack');
+    if (marqueeTrack) {
+      var marqueeWidth = marqueeTrack.scrollWidth / 3;
+      gsap.to(marqueeTrack, {
+        x: -marqueeWidth,
+        duration: 30,
+        ease: 'none',
+        repeat: -1
+      });
+    }
+
+    // Manifesto word reveal
+    var manifestoEl = document.getElementById('manifestoText');
+    var rawText = manifestoEl.textContent || manifestoEl.innerText;
+    var words = rawText.split(/\s+/);
+    manifestoEl.innerHTML = words.map(function(w) {
+      var isAccent = w.toLowerCase().replace(/[^a-z]/g, '') === 'ordinary';
+      return isAccent
+        ? '<span class="accent word">' + w + '</span>'
+        : '<span class="word">' + w + '</span>';
+    }).join(' ');
+
+    var manifestoWords = manifestoEl.querySelectorAll('.word');
+    ScrollTrigger.create({
+      trigger: '.manifesto',
+      start: 'top 65%',
+      end: 'bottom 35%',
+      onUpdate: function(self) {
+        var p = self.progress;
+        manifestoWords.forEach(function(w, i) {
+          w.classList.toggle('revealed', p > i / manifestoWords.length);
+        });
+      }
+    });
+
+    // Destination cards
+    if (cards && cards.length) {
+      gsap.from(cards, {
+        y: 50, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'expo.out',
+        scrollTrigger: { trigger: '#destGrid', start: 'top 80%' }
+      });
+      cards.forEach(function(card) {
+        var img = card.querySelector('.dest-card-img img');
+        if (img) {
+          gsap.to(img, {
+            y: -30, ease: 'none',
+            scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 1 }
+          });
+        }
+      });
+      init3DTilt();
+    }
+
+    // ─── PARALLAX STRIP ───
+    var parallaxBg = document.getElementById('parallaxBg');
+    if (parallaxBg) {
+      gsap.to(parallaxBg, {
+        y: -80, ease: 'none',
+        scrollTrigger: {
+          trigger: '.parallax-strip',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        }
+      });
+      gsap.from('.parallax-strip-content', {
+        y: 40, opacity: 0, duration: 1, ease: 'expo.out',
+        scrollTrigger: { trigger: '.parallax-strip', start: 'top 60%' }
+      });
+    }
+
+    // Stats counters — use proxy object for reliable number tweening
+    document.querySelectorAll('.counter').forEach(function(counter) {
+      var target = parseInt(counter.dataset.target);
+      var proxy = { val: 0 };
+      ScrollTrigger.create({
+        trigger: counter, start: 'top 85%', once: true,
+        onEnter: function() {
+          gsap.to(proxy, {
+            val: target, duration: 2, ease: 'power2.out',
+            onUpdate: function() { counter.textContent = Math.floor(proxy.val); }
+          });
+        }
+      });
+    });
+
+    // ─── CULTURE CARDS ───
+    var cultureCards = document.querySelectorAll('.culture-card');
+    if (cultureCards.length) {
+      gsap.from(cultureCards, {
+        y: 40, opacity: 0, duration: 0.6, stagger: 0.07, ease: 'expo.out',
+        scrollTrigger: { trigger: '#cultureGrid', start: 'top 80%' }
+      });
+      cultureCards.forEach(function(card) {
+        var img = card.querySelector('.culture-card-img img');
+        if (img) {
+          gsap.to(img, {
+            y: -20, ease: 'none',
+            scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 1 }
+          });
+        }
+      });
+    }
+
+    // Video cards
+    gsap.from('.video-card', {
+      y: 30, opacity: 0, duration: 0.6, stagger: 0.05, ease: 'expo.out',
+      scrollTrigger: { trigger: '.video-track', start: 'top 85%' }
+    });
+
+    // ─── SPLIT STORIES ───
+    document.querySelectorAll('.split-story').forEach(function(story) {
+      var text = story.querySelector('.split-story-text');
+      var media = story.querySelector('.split-story-media');
+      if (text) {
+        gsap.from(text.children, {
+          y: 30, opacity: 0, duration: 0.7, stagger: 0.1, ease: 'expo.out',
+          scrollTrigger: { trigger: story, start: 'top 70%' }
+        });
+      }
+      if (media) {
+        gsap.from(media, {
+          scale: 1.1, opacity: 0, duration: 1, ease: 'expo.out',
+          scrollTrigger: { trigger: story, start: 'top 75%' }
+        });
+      }
+    });
+
+    // ─── TESTIMONIALS ───
+    gsap.from('.testimonial-card', {
+      y: 40, opacity: 0, duration: 0.7, stagger: 0.1, ease: 'expo.out',
+      scrollTrigger: { trigger: '.testimonials-grid', start: 'top 80%' }
+    });
+
+    // Experience cards
+    gsap.from('.exp-card', {
+      y: 40, opacity: 0, duration: 0.7, stagger: 0.1, ease: 'expo.out',
+      scrollTrigger: { trigger: '.exp-grid', start: 'top 80%' }
+    });
+
+    // CTA
+    gsap.from('.cta-content', {
+      y: 40, opacity: 0, duration: 0.8, ease: 'expo.out',
+      scrollTrigger: { trigger: '.cta-section', start: 'top 75%' }
+    });
+
+    // Footer
+    gsap.from('.footer-inner > *', {
+      y: 20, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'expo.out',
+      scrollTrigger: { trigger: '.footer', start: 'top 90%' }
+    });
+
+    // Ornament
+    gsap.from('.ornament', {
+      scaleX: 0, duration: 0.8, ease: 'expo.out',
+      scrollTrigger: { trigger: '.ornament', start: 'top 85%' }
+    });
+
+    // Wave dividers
+    gsap.from('.wave-divider', {
+      opacity: 0, duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: '.wave-divider', start: 'top 95%' }
+    });
+
+    // ─── INIT AUTO-PLAY VIDEOS ───
+    initAutoPlayVideos();
+  }
+
+  // ─── MOBILE MENU ───
+  function initMobileMenu() {
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    if (!burger || !menu) return;
+
+    burger.addEventListener('click', function() {
+      var isOpen = menu.classList.toggle('open');
+      burger.classList.toggle('active', isOpen);
+      burger.setAttribute('aria-expanded', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    menu.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        menu.classList.remove('open');
+        burger.classList.remove('active');
+        burger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  // ─── UPDATE SPLIT STORY VIDEOS DYNAMICALLY ───
+  function updateSplitStoryVideos() {
+    var mediaEls = document.querySelectorAll('.split-story-media');
+    SPLIT_VIDEOS.forEach(function(sv, i) {
+      if (!mediaEls[i]) return;
+      var videoEl = mediaEls[i].querySelector('video');
+      if (!videoEl) return;
+      fetchPexelsVideo(sv.videoId).then(function(data) {
+        if (data.src) {
+          var source = videoEl.querySelector('source');
+          if (source) source.src = data.src;
+          else {
+            source = document.createElement('source');
+            source.src = data.src;
+            source.type = 'video/mp4';
+            videoEl.appendChild(source);
+          }
+          videoEl.load();
+        }
+      });
+    });
+  }
+
+  // ─── INIT ───
+  document.addEventListener('DOMContentLoaded', function() {
+    initMobileMenu();
+    forceHeroVideo();
+    runLoader();
+    updateSplitStoryVideos();
+  });
+
+})();
+</script>
+</body>
+</html>
